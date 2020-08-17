@@ -124,8 +124,13 @@ def dim2elsDemo():
     res = func_1d(P, q, x, r)
     # 求梯度
     res.backward()
-    print(x.grad)
-    gradient_descent_1d(x.grad, x, 0.2, 0.001, 10000, P, q, r)
+    # 学习率
+    leanRate = get_learning_rate(P, q, r, x)
+    # 迭代精度
+    precision = 0.001
+    # 迭代周期
+    epoch = 10000
+    gradient_descent_1d(x.grad, x, leanRate, precision, epoch, P, q, r)
 
 
 if __name__ == '__main__':
