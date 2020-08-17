@@ -35,9 +35,11 @@ def positiveDefiniteMatrix(dim=3):
     return C
 
 
+# 第6题
+# 梯度下降的详细实现
 def func_1d(P, q, x, r):
     """
-   目标函数
+   给定目标函数
     :param r: 随机生成的r
     :param q: 随机生成的一维列向量q
     :param P:随机生成的正定矩阵P
@@ -98,7 +100,7 @@ def gradient_descent_1d(grad, cur_x, learning_rate, precision, max_iters, P, q, 
     return cur_x
 
 
-# 第六题 End
+# 第6题 End
 
 # 第7题 给定n=2 随机生成P,q,x0,r,进行搜索
 def dim2elsDemo():
@@ -127,5 +129,4 @@ def dim2elsDemo():
 
 
 if __name__ == '__main__':
-    #
     dim2elsDemo()
