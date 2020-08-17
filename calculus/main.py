@@ -46,7 +46,7 @@ def func_1d(P, q, x, r):
     :param x: x
     :return: 函数结果
    """
-    return x.t().mm(P).mm(x).mm(torch.tensor([[0.5]])) + q.t().mm(x) + torch.tensor([[r]])
+    return x.t().mm(P).mm(x).mm(torch.tensor([[0.5]])) + q.t().mm(x) + r
 
 
 def get_learning_rate(P, q, r, x):
