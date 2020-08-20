@@ -56,8 +56,6 @@ def get_learning_rate(P, q, x, grad):
     :param q: 随机生成的向量q
     :param P: 随机生成的正定矩阵P
     """
-
-    # 此处将
     a = grad.T.mm(grad)
     b = torch.tensor([[-0.5]]).mm(grad.T).mm(P).mm(x) - torch.tensor([[0.5]]).mm(x.T).mm(P).mm(grad) - q.T.mm(grad)
     step = -(b.item()) / (a.item())
