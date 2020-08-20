@@ -31,8 +31,7 @@ def rvs(dim=3):
 def positiveDefiniteMatrix(dim=3):
     A = np.random.rand(dim, dim)
     B = np.dot(A, A.transpose())
-    C = B + B.T  # 确保对称
-    return C
+    return B
 
 
 # 第6题
@@ -49,18 +48,23 @@ def func_1d(P, q, x, r):
     return x.t().mm(P).mm(x).mm(torch.tensor([[0.5]])) + q.t().mm(x) + r
 
 
-def get_learning_rate(P, q, r, x):
+def get_learning_rate(P, q, x, grad):
     """
-    精确直线搜索（exact line search）求学习率的方法，但是PPT上的没看懂。。暂时写死吧。。
+    精确直线搜索（exact line search）求学习率的方法 将Xn-t▽f(Xn)代入f 最终为t的一元二次函数 对t求导可求最优的t值。
     :param x: 初始值
     :param r: 随机生成的常数r
     :param q: 随机生成的向量q
     :param P: 随机生成的正定矩阵P
     """
-    return 0.2
+
+    # 此处将
+    a = grad.T.mm(grad)
+    b = torch.tensor([[-0.5]]).mm(grad.T).mm(P).mm(x) - torch.tensor([[0.5]]).mm(x.T).mm(P).mm(grad) - q.T.mm(grad)
+    step = -(b.item()) / (a.item())
+    return step
 
 
-def gradient_descent_1d(grad, cur_x, learning_rate, precision, max_iters, P, q, r):
+def gradient_descent_1d(grad, cur_x, precision, max_iters, P, q, r):
     """
     一维问题的梯度下降法
     :param r: 随机生成的常数r
@@ -68,7 +72,6 @@ def gradient_descent_1d(grad, cur_x, learning_rate, precision, max_iters, P, q, 
     :param P: 随机生成的正定矩阵P
     :param grad: 目标函数的梯度
     :param cur_x: 当前 x 值，通过参数可以提供初始值
-    :param learning_rate: 学习率，也相当于设置的步长
     :param precision: 设置收敛精度
     :param max_iters: 最大迭代次数
     :return: 局部最小值 x*
@@ -78,6 +81,9 @@ def gradient_descent_1d(grad, cur_x, learning_rate, precision, max_iters, P, q, 
         # 迭代的停止条件，梯度的二范数小于指定的精度
         if torch.norm(grad) < precision:
             break
+
+        # exactly line search learning rate calc
+        learning_rate = get_learning_rate(P, q, cur_x, grad)
         cur_x = cur_x - grad * learning_rate
         tensors.append(cur_x)
         grad.data.zero_()
@@ -124,13 +130,11 @@ def dim2elsDemo():
     res = func_1d(P, q, x, r)
     # 求梯度
     res.backward()
-    # 学习率
-    leanRate = get_learning_rate(P, q, r, x)
     # 迭代精度
     precision = 0.001
     # 迭代周期
     epoch = 10000
-    gradient_descent_1d(x.grad, x, leanRate, precision, epoch, P, q, r)
+    gradient_descent_1d(x.grad, x, precision, epoch, P, q, r)
 
 
 if __name__ == '__main__':
